@@ -1,0 +1,2 @@
+Module	Section	Sample Name	Source
+FastQC	all_sections	NA12878_small_R1	/Users/shraddh_mac/Documents/GitHub/from-fastq-to-asthma-gwas/01_fastq_qc/results/fastqc/NA12878_small_R1_fastqc.zip
