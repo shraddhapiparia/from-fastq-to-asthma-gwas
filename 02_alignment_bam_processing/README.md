@@ -1,5 +1,11 @@
 # 02_alignment_bam_processing
 
+**⚠️ Toy Demonstration Module**
+
+This module is a lightweight, educational workflow demo using toy reference sequences and a small FASTQ file. The reference is intentionally miniature (not a real human genome), reads do not authentically align to it, and outputs are for **workflow illustration only**. This is not a biologically meaningful alignment.
+
+---
+
 Objective
 ---------
 
@@ -9,6 +15,7 @@ Dataset
 -------
 
 - Example FASTQ (used here): `data/NA12878_small_R1.fastq.gz` (same file from `01_fastq_qc`). This is a small demonstration FASTQ suitable for testing the commands; it is not representative of a full sequencing run.
+- Example reference: `refs/toy_reference.fa` — a tiny toy reference with two short sequences (~500 bp each) for demonstration purposes.
 
 Tools
 -----
@@ -22,6 +29,7 @@ Folder structure
 ----------------
 
 - `scripts/` — helper scripts (`run_alignment.sh`, `process_bam.sh`)
+- `refs/` — reference FASTA files (includes `toy_reference.fa`)
 - `results/` — example outputs (tracked with `.gitkeep`)
 - `figures/` — placeholder figures for a report (tracked with `.gitkeep`)
 - `environment.yml` — conda environment spec for this module
@@ -35,47 +43,78 @@ Workflow overview
 4. Mark duplicates with `picard MarkDuplicates` (write metrics file).
 5. Run `samtools flagstat` to produce basic alignment statistics.
 
-Required reference genome files
-------------------------------
+Quick Start (copy-paste these commands)
+---------------------------------------
 
-You need a reference FASTA (for example, a small chromosome like chr20 or chr22). Place the FASTA in `refs/` (e.g., `refs/chr20.fa`). Before alignment, build indexes:
+**Prerequisites:** Activate the conda environment first.
 
 ```bash
-# BWA index (creates .bwt, .pac, .ann, .amb, .sa files)
-bwa index refs/chr20.fa
-
-# Samtools faidx (creates refs/chr20.fa.fai)
-samtools faidx refs/chr20.fa
-
-# (Optional) Create a sequence dictionary for Picard
-picard CreateSequenceDictionary R=refs/chr20.fa O=refs/chr20.dict
+conda activate alignment-bam-processing
 ```
 
-Scripts
--------
-
-`run_alignment.sh` — runs `bwa mem` and converts SAM to unsorted BAM.
-
-Usage example:
+**Step 1: Index the toy reference (one-time setup)**
 
 ```bash
-# align and produce unsorted BAM
-bash scripts/run_alignment.sh refs/chr20.fa data/NA12878_small_R1.fastq.gz results/sample_unsorted.bam -t 4
+cd 02_alignment_bam_processing
+bwa index refs/toy_reference.fa
+samtools faidx refs/toy_reference.fa
+picard CreateSequenceDictionary R=refs/toy_reference.fa O=refs/toy_reference.dict
 ```
 
-`process_bam.sh` — sorts, indexes, marks duplicates, and runs `flagstat`.
-
-Usage example:
+**Step 2: Create results directory**
 
 ```bash
-# sort, mark duplicates, index, and flagstat
+mkdir -p results/processed
+```
+
+**Step 3: Run alignment (reads → unsorted BAM)**
+
+```bash
+bash scripts/run_alignment.sh refs/toy_reference.fa ../01_fastq_qc/data/NA12878_small_R1.fastq.gz results/sample_unsorted.bam -t 4
+```
+
+**Step 4: Process BAM (sort, index, mark duplicates, flagstat)**
+
+```bash
 bash scripts/process_bam.sh results/sample_unsorted.bam results/processed -t 4
 ```
 
-Commands to build a BWA index
------------------------------
+**Step 5: Inspect results**
 
-As above, run:
+```bash
+# View alignment statistics
+cat results/processed/sample_unsorted.flagstat.txt
+
+# View Picard duplication metrics
+head -20 results/processed/sample_unsorted.metrics.txt
+```
+
+Expected outputs
+----------------
+
+After running the above commands, you will find:
+
+- `results/sample_unsorted.bam` — unsorted BAM produced from alignment
+- `results/processed/sample_unsorted.sorted.bam` — sorted BAM
+- `results/processed/sample_unsorted.sorted.bam.bai` — BAM index
+- `results/processed/sample_unsorted.dedup.bam` — duplicates-marked BAM (output from Picard)
+- `results/processed/sample_unsorted.metrics.txt` — Picard duplication metrics
+- `results/processed/sample_unsorted.flagstat.txt` — output from `samtools flagstat`
+
+Required reference genome files
+------------------------------
+
+A toy reference (`refs/toy_reference.fa`) is included in this module. It contains two tiny sequences and is suitable only for testing the workflow.
+
+For real human genome work, download a chromosome or full reference:
+
+```bash
+# Example: download chromosome 20 from NCBI (replace with your preferred source)
+# curl -o refs/chr20.fa.gz https://...
+# gunzip refs/chr20.fa
+```
+
+Then build indexes:
 
 ```bash
 bwa index refs/your_reference.fa
@@ -83,15 +122,30 @@ samtools faidx refs/your_reference.fa
 picard CreateSequenceDictionary R=refs/your_reference.fa O=refs/your_reference.dict
 ```
 
-Expected outputs
-----------------
+Detailed script usage
+---------------------
 
-- `results/sample_unsorted.bam` — unsorted BAM produced from alignment
-- `results/processed/sample.sorted.bam` — sorted BAM
-- `results/processed/sample.sorted.bam.bai` — BAM index
-- `results/processed/sample.dedup.bam` — duplicates-marked BAM (output from Picard)
-- `results/processed/sample.metrics.txt` — Picard duplication metrics
-- `results/processed/sample.flagstat.txt` — output from `samtools flagstat`
+`run_alignment.sh` — runs `bwa mem` and converts SAM to unsorted BAM.
+
+```bash
+bash scripts/run_alignment.sh <REFERENCE_FA> <FASTQ> <OUT_BAM> [-t THREADS]
+```
+
+Example:
+```bash
+bash scripts/run_alignment.sh refs/toy_reference.fa data/NA12878_small_R1.fastq.gz results/sample_unsorted.bam -t 4
+```
+
+`process_bam.sh` — sorts, indexes, marks duplicates, and runs `flagstat`.
+
+```bash
+bash scripts/process_bam.sh <IN_BAM> <OUT_DIR> [-t THREADS]
+```
+
+Example:
+```bash
+bash scripts/process_bam.sh results/sample_unsorted.bam results/processed -t 4
+```
 
 SAM vs BAM (brief)
 ------------------
@@ -109,15 +163,8 @@ Why sorting, indexing, and duplicate marking?
 What this implies
 -----------------
 
-This module provides the minimal set of commands and scripts needed to transform raw reads into a processed BAM ready for downstream analysis (variant calling, QC). The example uses a tiny demonstration FASTQ and a small reference; for real datasets use full references and scale compute resources accordingly.
+This module demonstrates the essential BAM processing steps. The toy reference and small FASTQ ensure fast execution for testing and understanding the workflow. For real sequencing projects, use whole-genome or appropriate chromosome references and expect significantly longer runtimes. The statistics and quality metrics from the toy demo are not biologically meaningful; use them only to verify that the scripts and tools are functioning correctly.
 
-Example output (hypothetical)
------------------------------
+---
 
-```
-# samtools flagstat (example, DO NOT treat as real):
-100 + 0 in total (QC-passed reads + QC-failed reads)
-90 + 0 mapped (90.0% : N/A)
-```
-
-Replace `refs/your_reference.fa` and `data/NA12878_small_R1.fastq.gz` with your paths when running locally.
+**Note:** This is an educational module for workflow illustration. Treat outputs as demonstration artifacts, not scientific results.
