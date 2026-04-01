@@ -1,0 +1,10 @@
+name: alignment-bam-processing
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - bwa
+  - samtools
+  - picard
