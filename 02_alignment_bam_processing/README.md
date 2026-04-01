@@ -170,7 +170,7 @@ Results
 
 ### Alignment workflow execution
 
-![Alignment Workflow Terminal](figures/alignment_workflow_terminal.svg)
+![Alignment Workflow Terminal](figures/alignment_workflow_terminal.png)
 
 The alignment and BAM processing workflow completes successfully when all steps execute without error. The toy FASTQ and toy reference produce **0% mapped reads**, which is expected because the reads in the demonstration file do not authentically align to the toy reference sequences. This is intentional and demonstrates that the tools are functioning correctly—they attempted alignment and found no matches, which is the correct behavior for incompatible data.
 
@@ -184,7 +184,7 @@ The alignment and BAM processing workflow completes successfully when all steps 
 
 ### Flagstat output example
 
-![Flagstat Output](figures/flagstat_output.svg)
+![Flagstat Output](figures/flagstat_output.png)
 
 The flagstat output provides a quick summary of alignment quality. In this toy demo, the 0.00% mapping rate reflects the intentional mismatch between the toy FASTQ and toy reference.
 
