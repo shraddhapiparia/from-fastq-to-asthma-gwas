@@ -165,6 +165,40 @@ What this implies
 
 This module demonstrates the essential BAM processing steps. The toy reference and small FASTQ ensure fast execution for testing and understanding the workflow. For real sequencing projects, use whole-genome or appropriate chromosome references and expect significantly longer runtimes. The statistics and quality metrics from the toy demo are not biologically meaningful; use them only to verify that the scripts and tools are functioning correctly.
 
+Results
+-------
+
+### Alignment workflow execution
+
+![Alignment Workflow Terminal](figures/alignment_workflow_terminal.svg)
+
+The alignment and BAM processing workflow completes successfully when all steps execute without error. The toy FASTQ and toy reference produce **0% mapped reads**, which is expected because the reads in the demonstration file do not authentically align to the toy reference sequences. This is intentional and demonstrates that the tools are functioning correctly—they attempted alignment and found no matches, which is the correct behavior for incompatible data.
+
+### Generated files explained
+
+- **sample_unsorted.sorted.bam** — the BAM file sorted by reference coordinate (required for most downstream tools)
+- **sample_unsorted.sorted.bam.bai** — the BAM index file allowing rapid random access to alignments
+- **sample_unsorted.dedup.bam** — BAM file with duplicate reads marked (or removed if desired) by Picard
+- **sample_unsorted.metrics.txt** — Picard metrics report showing duplicate statistics (library complexity, duplication rate)
+- **sample_unsorted.flagstat.txt** — simple alignment statistics summary (total reads, mapped reads, paired reads, etc.)
+
+### Flagstat output example
+
+![Flagstat Output](figures/flagstat_output.svg)
+
+The flagstat output provides a quick summary of alignment quality. In this toy demo, the 0.00% mapping rate reflects the intentional mismatch between the toy FASTQ and toy reference.
+
+What this module demonstrates
+-----------------------------
+
+- **Reference indexing** with `bwa index` and `samtools faidx` — preparation of reference FASTA for fast alignment lookup
+- **Alignment** with `bwa mem` — the core step mapping reads to the reference genome
+- **SAM to BAM conversion** with `samtools view -bS` — conversion to binary format for efficient storage
+- **BAM sorting** with `samtools sort` — ordering alignments by genomic coordinate (required by downstream tools)
+- **BAM indexing** with `samtools index` — creation of index for random access
+- **Duplicate marking** with `picard MarkDuplicates` — identify and flag PCR/optical duplicates
+- **Alignment QC** with `samtools flagstat` — quick summary statistics of alignment results
+
 ---
 
 **Note:** This is an educational module for workflow illustration. Treat outputs as demonstration artifacts, not scientific results.
