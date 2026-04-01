@@ -1,0 +1,9 @@
+name: variant-annotation
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3.11
+  - bcftools
+  - ensembl-vep  # optional, comment out if too heavy
