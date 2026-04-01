@@ -1,0 +1,2 @@
+Sample	Top overrepresented sequence	Sum of remaining overrepresented sequences
+NA12878_small_R1	33.33333333333333	66.66666666666666
