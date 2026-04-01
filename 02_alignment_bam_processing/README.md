@@ -1,6 +1,6 @@
 # 02_alignment_bam_processing
 
-**⚠️ Toy Demonstration Module**
+** Toy Demonstration Module**
 
 This module is a lightweight, educational workflow demo using toy reference sequences and a small FASTQ file. The reference is intentionally miniature (not a real human genome), reads do not authentically align to it, and outputs are for **workflow illustration only**. This is not a biologically meaningful alignment.
 
