@@ -1,0 +1,3 @@
+@HD	VN:1.6
+@SQ	SN:toy_chr20_1-500	LN:368	M5:8bef8898a4c0d66591a35f235df0441f	UR:file:///Users/shraddh_mac/Documents/GitHub/from-fastq-to-asthma-gwas/02_alignment_bam_processing/refs/toy_reference.fa
+@SQ	SN:toy_chr22_1-400	LN:312	M5:77d5d2223cae03178092faaedebaa5e6	UR:file:///Users/shraddh_mac/Documents/GitHub/from-fastq-to-asthma-gwas/02_alignment_bam_processing/refs/toy_reference.fa
