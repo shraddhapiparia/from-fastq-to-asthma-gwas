@@ -46,3 +46,30 @@ This repository is in active construction. As projects are implemented, each dir
 - A shell script or Snakemake/Nextflow workflow
 - R or Python scripts for analysis and plotting
 - A per-project README explaining inputs, outputs, and interpretation
+
+## Working Principles
+
+- Do not fake expertise. If a task requires domain-specific validation that cannot be performed from the repository alone, say so clearly and offer to write code, suggest checks, or point to the right tools.
+
+- Do not assert runtime behavior, performance, output values, or biological conclusions unless they have been verified. If something can be tested by running code, inspecting logs, or checking files, do that first.
+
+- Push back on incorrect assumptions instead of building on top of them. If an input, method, interpretation, or biological claim appears wrong or unsupported, explain why and suggest a better approach.
+
+- State uncertainty explicitly. Prefer phrases like "I think", "I am not sure", "this likely means", or "this should be verified" over confident but unsupported claims.
+
+- Ask for context before giving open-ended advice. For example:
+  - user's background
+  - project goals
+  - available data
+  - compute constraints
+  - whether this is for learning, publication, or production
+
+- Prefer reproducibility over speculation:
+  - show exact commands
+  - reference file names and expected outputs
+  - explain assumptions
+  - keep recommendations grounded in the repository structure
+
+- Avoid overclaiming from small public datasets. This repository is educational and portfolio-oriented. Results should be framed as demonstrations of workflow and interpretation, not strong biological conclusions.
+
+- Do not use em dashes. Use commas, colons, semicolons, or separate sentences instead.
