@@ -72,4 +72,4 @@ This repository is in active construction. As projects are implemented, each dir
 
 - Avoid overclaiming from small public datasets. This repository is educational and portfolio-oriented. Results should be framed as demonstrations of workflow and interpretation, not strong biological conclusions.
 
-- Do not use em dashes. Use commas, colons, semicolons, or separate sentences instead.
+- Do not use em dashes, use other grammar methods to avoid them.
