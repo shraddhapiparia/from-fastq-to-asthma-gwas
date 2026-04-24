@@ -1,0 +1,9 @@
+{
+    "geno_prefix":      "05_population_pca/results/demo_genotypes_qc",
+    "pheno_file":       "06_asthma_gwas/results/asthma_pheno.txt",
+    "prs_out_prefix":   "07_polygenic_risk_score/results/asthma_prs",
+    "prs_p_threshold":  "0.5",
+    "eqtl_ref":         "09_gwas_to_eqtl/data/demo_eqtl_reference.tsv",
+    "eqtl_out_prefix":  "09_gwas_to_eqtl/results/eqtl_annotation",
+    "eqtl_top_n":       "20"
+}

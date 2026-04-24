@@ -1,180 +1,191 @@
 # From FASTQ to Asthma GWAS
 
-Small, practical genomics projects that demonstrate the core DNA analysis workflow used in human genetics research, from raw sequencing reads through variant calling, GWAS, polygenic risk scores, and asthma-focused biological interpretation.
+An end-to-end genomics pipeline demonstrating how raw DNA sequencing data are transformed into biological insight: from FASTQ files to GWAS signals, polygenic risk scores, and gene-level interpretation in asthma.
 
-This repository is intended as a portfolio and learning resource for understanding the tools commonly used by genomics scientists. Rather than focusing on a single large analysis, it contains a series of small, self-contained projects that together illustrate how DNA data move through a typical genomics pipeline.
+This repository is designed as a practical, reproducible portfolio project that reflects how genomic data are processed and analyzed in real research settings.
 
-The projects begin with raw sequencing data and gradually move toward increasingly biological questions:
+---
 
-- How do we assess sequencing quality?
-- How are reads aligned to the reference genome?
-- How are variants identified and interpreted?
-- How do we analyze genotype data across individuals?
-- How do we connect genetic variation to asthma risk and gene expression?
+## What This Project Demonstrates
 
-Although the technical workflow is general, later projects are framed around asthma-relevant genes and interpretation to reflect my broader research interests in asthma genetics, treatment response, and complex disease heterogeneity.
+This project answers a central question in human genetics:
+
+**How do we go from raw sequencing data to understanding genetic risk for disease?**
+
+The workflow covers:
+
+- Sequencing quality control and data validation  
+- Read alignment and BAM processing  
+- Variant discovery and filtering  
+- Variant annotation and biological interpretation  
+- Population structure analysis (PCA)  
+- Genome-wide association study (GWAS)  
+- Polygenic risk score (PRS) construction  
+- Functional interpretation via GWAS → eQTL mapping  
+
+While the pipeline is general, later stages focus on asthma genetics to demonstrate how computational results connect to disease biology.
+
+---
+
+## End-to-End Workflow
+
+FASTQ  
+↓  
+Quality Control (FastQC, MultiQC)  
+↓  
+Alignment (BWA)  
+↓  
+BAM Processing (Samtools, Picard)  
+↓  
+Variant Calling (GATK)  
+↓  
+Variant Annotation  
+↓  
+Population Structure (PCA)  
+↓  
+GWAS  
+↓  
+Polygenic Risk Score (PRS)  
+↓  
+GWAS → eQTL Interpretation  
 
 ---
 
 ## Repository Structure
 
-    from-fastq-to-asthma-gwas/
-    ├── README.md
-    ├── datasets/
-    │   └── README.md
-    ├── 01_fastq_qc/
-    ├── 02_alignment_bam_processing/
-    ├── 03_variant_calling_gatk/
-    ├── 04_variant_annotation/
-    ├── 05_population_pca/
-    ├── 06_asthma_gwas/
-    ├── 07_polygenic_risk_score/
-    ├── 08_rare_variant_testing/
-    ├── 09_gwas_to_eqtl/
-    └── 10_nextflow_pipeline/
+from-fastq-to-asthma-gwas/  
+├── datasets/  
+├── 01_fastq_qc/  
+├── 02_alignment_bam_processing/  
+├── 03_variant_calling_gatk/  
+├── 04_variant_annotation/  
+├── 05_population_pca/  
+├── 06_asthma_gwas/  
+├── 07_polygenic_risk_score/  
+├── 08_rare_variant_testing/  
+├── 09_gwas_to_eqtl/  
+├── 10_nextflow_pipeline/  
 
 ---
 
-## Projects
+## Modules Overview
 
-| Project | Goal | Main Tools |
-|----------|-------|-------------|
-| `01_fastq_qc` | Assess sequencing quality and identify adapter contamination | FastQC, MultiQC |
-| `02_alignment_bam_processing` | Align reads to the human reference genome and create a processed BAM file | BWA, Samtools, Picard |
-| `03_variant_calling_gatk` | Call SNPs and indels from aligned sequencing data | GATK, bcftools |
-| `04_variant_annotation` | Annotate variants with gene names and predicted consequences | VEP, SnpEff, ClinVar |
-| `05_population_pca` | Perform genotype QC and ancestry PCA using population genotype data | PLINK |
-| `06_asthma_gwas` | Run a small asthma-like GWAS and generate Manhattan and QQ plots | PLINK, R |
-| `07_polygenic_risk_score` | Compute a simple asthma polygenic risk score | PRSice, PLINK |
-| `08_rare_variant_testing` | Demonstrate gene-based burden testing using rare variants | SKAT, RVTests |
-| `09_gwas_to_eqtl` | Connect a GWAS SNP to gene expression using GTEx | GTEx, Ensembl |
-| `10_nextflow_pipeline` | Build a reproducible DNA analysis workflow from FASTQ to VCF | Nextflow, Docker |
-
----
-
-## Workflow Overview
-
-    FASTQ
-      ↓
-    Quality Control
-      ↓
-    Alignment
-      ↓
-    BAM Processing
-      ↓
-    Variant Calling
-      ↓
-    Variant Annotation
-      ↓
-    Population Structure / GWAS
-      ↓
-    PRS / Functional Interpretation
+| Module | What It Does | Why It Matters |
+|--------|-------------|----------------|
+| 01_fastq_qc | Evaluates sequencing quality | Detects issues before downstream analysis |
+| 02_alignment_bam_processing | Maps reads to reference genome | Converts raw reads into genomic coordinates |
+| 03_variant_calling_gatk | Identifies SNPs and indels | Core step for detecting genetic variation |
+| 04_variant_annotation | Adds gene-level interpretation | Connects variants to biology |
+| 05_population_pca | Computes ancestry structure | Controls confounding in GWAS |
+| 06_asthma_gwas | Identifies associated variants | Links genotype to phenotype |
+| 07_polygenic_risk_score | Builds polygenic risk score | Aggregates genetic risk across variants |
+| 08_rare_variant_testing | Gene-level burden testing | Captures effects of rare variants |
+| 09_gwas_to_eqtl | Maps variants to gene expression | Generates mechanistic hypotheses |
+| 10_nextflow_pipeline | Reproducible pipeline | Scales workflow to production settings |
 
 ---
 
-## Datasets Used
+## Key Concepts
 
-This repository uses small public datasets that are commonly used for practice and demonstration.
+This project focuses on core concepts that drive most genomics workflows:
 
-### Sequencing-Based Projects
-
-The early projects use a small subset of the NA12878 sample from Genome in a Bottle, a standard benchmark dataset in genomics.
-
-These projects include:
-
-- FASTQ quality control
-- Alignment and BAM processing
-- Variant calling
-- Variant annotation
-- Nextflow pipeline
-
-### Genotype-Based Projects
-
-The later projects use a subset of the 1000 Genomes Project for population structure, GWAS, and polygenic risk score examples.
-
-### Functional Interpretation
-
-The GWAS follow-up project uses GTEx to investigate whether a top SNP is associated with gene expression in relevant tissues such as lung or blood.
+- Why sequencing QC determines downstream success  
+- How alignment quality impacts variant calling  
+- How false positives arise in variant detection  
+- Why population stratification biases GWAS  
+- How GWAS signals map to biological mechanisms  
+- Why PRS requires careful interpretation (not diagnostic)  
 
 ---
 
-## Asthma-Focused Interpretation
+## 🧬 Example Biological Interpretation (Asthma)
 
-The early projects are intentionally general because the same sequencing and variant-calling tools are used across many diseases.
+Later modules demonstrate how computational outputs translate into biological hypotheses.
 
-Later projects include asthma-focused interpretation by highlighting genes that are relevant to asthma susceptibility or treatment response, such as:
+Example:
 
-- ORMDL3 / GSDMB
-- IL1RL1
-- IL13
-- FCER1A
-- IL18R1
+- GWAS identifies variants associated with asthma risk  
+- These variants map to loci near genes such as:
+  - ORMDL3 / GSDMB  
+  - IL1RL1  
+  - IL13  
+  - FCER1A  
+- eQTL mapping suggests these variants may influence gene expression in lung or immune tissues  
 
-The goal is not to make strong biological claims from small public datasets, but rather to demonstrate how a genomics scientist might move from raw data to a biologically meaningful question.
+This reflects a typical reasoning path in genomics:
 
-For example:
-
-- A variant may be annotated near an asthma-related gene
-- A GWAS hit may be followed into GTEx to ask whether it changes expression in lung tissue
-- A polygenic risk score may be computed using asthma GWAS summary statistics
+Variant → Gene → Expression → Disease Mechanism
 
 ---
 
-## Why This Repository Exists
+## Datasets
 
-My recent work has focused on more advanced problems in computational genomics, including:
+To keep the project lightweight and reproducible:
 
-- GWAS and treatment-response modeling
-- Asthma pharmacogenetics
-- Genotype representation learning
-- Polygenic risk scores
-- Functional interpretation of genetic signals
+- Genome in a Bottle (HG002 / NA12878)  
+  Used for sequencing, alignment, and variant calling modules  
 
-This repository complements those projects by documenting the standard genomics workflow that underlies much of that work.
+- Simulated / subset genotype datasets  
+  Used for PCA, GWAS, and PRS modules  
 
-It is intended to show familiarity with the practical tools commonly used by genomics scientists while also connecting those tools to a disease area that motivates my research.
+- GTEx (reference-based)  
+  Used for GWAS → eQTL interpretation  
 
 ---
 
-## Tools Covered
+## Important Notes
 
-### Sequencing and Alignment
+- This is a demonstration-scale pipeline, not a production GWAS  
+- Some modules use simulated or subset data for speed  
+- Results are for workflow demonstration, not biological claims  
 
-- FastQC
-- MultiQC
-- BWA
-- Samtools
-- Picard
+---
 
-### Variant Calling and Annotation
+## How to Run
 
-- GATK
-- bcftools
-- VEP
-- SnpEff
-- ClinVar
+Each module is self-contained with its own environment and scripts.
 
-### Genotype Analysis
+Example:
 
-- PLINK
-- PRSice
-- SKAT
-- RVTests
+```bash
+cd 05_population_pca
+conda env create -f environment.yml
+conda activate population_pca_env
+bash scripts/run_qc_pca.sh
+```
 
-### Reproducibility
+See individual module READMEs for full instructions.
 
-- Nextflow
-- Docker
+---
+
+## What This Shows
+
+This repository demonstrates:
+
+- Practical genomics pipeline implementation
+- Reproducible workflow design
+- Ability to connect computational outputs to biological interpretation
 
 ---
 
 ## Future Directions
 
-Potential future additions include:
+This repository focuses on core DNA analysis workflows. More advanced extensions are being developed here or in parallel projects:
 
-- RNA-seq workflow
-- eQTL mapping from raw expression data
-- Fine-mapping and credible sets
-- Colocalization analysis
-- Multi-omic interpretation of asthma-associated loci
-- Integration with more advanced representation learning approaches
+- RNA-seq and expression-based pipelines for downstream functional analysis  
+- eQTL mapping from raw expression data and integration with GWAS signals  
+- Fine-mapping and colocalization to identify likely causal variants  
+- Multi-omic integration (genotype, expression, proteomics)  
+- Machine learning approaches for genotype representation and polygenic risk modeling  
+
+These directions reflect ongoing work in applying computational and statistical methods to understand disease mechanisms beyond standard GWAS pipelines. 
+
+---
+
+## Summary
+
+This project demonstrates how genomics moves from:
+
+raw sequencing data → statistical signals → biological insight
+
+in a structured, reproducible, and interpretable way.

@@ -1,58 +1,70 @@
-# 02_alignment_bam_processing
+# 02: Alignment and BAM Processing
 
-** Toy Demonstration Module**
+## Objective
 
-This module is a lightweight, educational workflow demo using toy reference sequences and a small FASTQ file. The reference is intentionally miniature (not a real human genome), reads do not authentically align to it, and outputs are for **workflow illustration only**. This is not a biologically meaningful alignment.
+Perform read alignment and BAM processing to convert raw sequencing reads into analysis-ready data for variant calling.
+
+This step transforms FASTQ reads into genomic coordinates and prepares them for downstream analyses such as variant discovery.
 
 ---
 
-Objective
----------
+## Why This Step Matters
 
-This lightweight module demonstrates read alignment and basic BAM processing for a small example FASTQ (from Project 01). It shows how to align reads with `bwa`, convert SAM to BAM with `samtools`, sort and index BAMs, mark duplicates with `picard`, and collect basic alignment statistics with `samtools flagstat`.
+Alignment is a critical step in genomics pipelines.
 
-Dataset
--------
+Errors at this stage directly affect:
 
-- Example FASTQ (used here): `data/NA12878_small_R1.fastq.gz` (same file from `01_fastq_qc`). This is a small demonstration FASTQ suitable for testing the commands; it is not representative of a full sequencing run.
-- Example reference: `refs/toy_reference.fa` — a tiny toy reference with two short sequences (~500 bp each) for demonstration purposes.
+- Mapping accuracy  
+- Coverage estimates  
+- Variant calling sensitivity and specificity  
 
-Tools
------
+Key risks include:
 
-- `bwa` — alignment (mem)
-- `samtools` — SAM/BAM conversion, sorting, indexing, and `flagstat`
-- `picard` — MarkDuplicates
-- `bash` — wrapper scripts
+- Misaligned reads in repetitive regions  
+- PCR duplicates inflating coverage  
+- Poor mapping quality leading to false variants  
 
-Folder structure
-----------------
+---
 
-- `scripts/` — helper scripts (`run_alignment.sh`, `process_bam.sh`)
-- `refs/` — reference FASTA files (includes `toy_reference.fa`)
-- `results/` — example outputs (tracked with `.gitkeep`)
-- `figures/` — placeholder figures for a report (tracked with `.gitkeep`)
-- `environment.yml` — conda environment spec for this module
+## Dataset
 
-Workflow overview
------------------
+This module uses:
 
-1. Align reads to a reference FASTA with `bwa mem` → produces SAM.
-2. Convert SAM to BAM with `samtools view -bS`.
-3. Sort BAM with `samtools sort` and index with `samtools index`.
-4. Mark duplicates with `picard MarkDuplicates` (write metrics file).
-5. Run `samtools flagstat` to produce basic alignment statistics.
+- A small FASTQ file from Project 01  
+- A lightweight reference genome for fast execution  
 
-Quick Start (copy-paste these commands)
----------------------------------------
+The workflow mirrors real alignment pipelines while remaining computationally efficient.
 
-**Prerequisites:** Activate the conda environment first.
+---
+
+## Tools
+
+- `bwa` — read alignment  
+- `samtools` — BAM processing and QC  
+- `picard` — duplicate marking  
+- `bash` — workflow scripts  
+
+---
+
+## Workflow Overview
+
+1. Align reads to a reference genome  
+2. Convert SAM to BAM  
+3. Sort and index BAM  
+4. Mark duplicate reads  
+5. Generate alignment statistics  
+
+---
+
+## Running the Analysis
+
+### Setup environment
 
 ```bash
 conda activate alignment-bam-processing
 ```
 
-**Step 1: Index the toy reference (one-time setup)**
+### Step 1: Index reference
 
 ```bash
 cd 02_alignment_bam_processing
@@ -61,144 +73,151 @@ samtools faidx refs/toy_reference.fa
 picard CreateSequenceDictionary R=refs/toy_reference.fa O=refs/toy_reference.dict
 ```
 
-**Step 2: Create results directory**
+### Step 2: Create output directory
 
 ```bash
 mkdir -p results/processed
 ```
 
-**Step 3: Run alignment (reads → unsorted BAM)**
+### Step 3: Run alignment
 
 ```bash
 bash scripts/run_alignment.sh refs/toy_reference.fa ../01_fastq_qc/data/NA12878_small_R1.fastq.gz results/sample_unsorted.bam -t 4
 ```
 
-**Step 4: Process BAM (sort, index, mark duplicates, flagstat)**
+### Step 4: Process BAM
 
 ```bash
 bash scripts/process_bam.sh results/sample_unsorted.bam results/processed -t 4
 ```
 
-**Step 5: Inspect results**
+### Step 5: Inspect outputs
 
 ```bash
-# View alignment statistics
 cat results/processed/sample_unsorted.flagstat.txt
-
-# View Picard duplication metrics
 head -20 results/processed/sample_unsorted.metrics.txt
 ```
 
-Expected outputs
-----------------
+---
 
-After running the above commands, you will find:
+## Expected Outputs
 
-- `results/sample_unsorted.bam` — unsorted BAM produced from alignment
-- `results/processed/sample_unsorted.sorted.bam` — sorted BAM
-- `results/processed/sample_unsorted.sorted.bam.bai` — BAM index
-- `results/processed/sample_unsorted.dedup.bam` — duplicates-marked BAM (output from Picard)
-- `results/processed/sample_unsorted.metrics.txt` — Picard duplication metrics
-- `results/processed/sample_unsorted.flagstat.txt` — output from `samtools flagstat`
-
-Required reference genome files
-------------------------------
-
-A toy reference (`refs/toy_reference.fa`) is included in this module. It contains two tiny sequences and is suitable only for testing the workflow.
-
-For real human genome work, download a chromosome or full reference:
-
-```bash
-# Example: download chromosome 20 from NCBI (replace with your preferred source)
-# curl -o refs/chr20.fa.gz https://...
-# gunzip refs/chr20.fa
-```
-
-Then build indexes:
-
-```bash
-bwa index refs/your_reference.fa
-samtools faidx refs/your_reference.fa
-picard CreateSequenceDictionary R=refs/your_reference.fa O=refs/your_reference.dict
-```
-
-Detailed script usage
----------------------
-
-`run_alignment.sh` — runs `bwa mem` and converts SAM to unsorted BAM.
-
-```bash
-bash scripts/run_alignment.sh <REFERENCE_FA> <FASTQ> <OUT_BAM> [-t THREADS]
-```
-
-Example:
-```bash
-bash scripts/run_alignment.sh refs/toy_reference.fa data/NA12878_small_R1.fastq.gz results/sample_unsorted.bam -t 4
-```
-
-`process_bam.sh` — sorts, indexes, marks duplicates, and runs `flagstat`.
-
-```bash
-bash scripts/process_bam.sh <IN_BAM> <OUT_DIR> [-t THREADS]
-```
-
-Example:
-```bash
-bash scripts/process_bam.sh results/sample_unsorted.bam results/processed -t 4
-```
-
-SAM vs BAM (brief)
-------------------
-
-- SAM: Sequence Alignment/Map format — a human-readable, tab-delimited text format describing alignments. Useful for inspection but large on disk.
-- BAM: the binary, compressed representation of SAM. Efficient for storage and fast random access when indexed.
-
-Why sorting, indexing, and duplicate marking?
--------------------------------------------
-
-- Sorting: many downstream tools (e.g., variant callers) expect reads sorted by reference coordinate. Sorting groups reads by genomic position, enabling efficient algorithms.
-- Indexing: `samtools index` creates an index allowing rapid retrieval of alignments overlapping genomic regions without reading the whole file.
-- Duplicate marking: PCR or optical duplicates inflate coverage and can bias variant calling. Marking (and optionally removing) duplicates reduces false positives.
-
-What this implies
------------------
-
-This module demonstrates the essential BAM processing steps. The toy reference and small FASTQ ensure fast execution for testing and understanding the workflow. For real sequencing projects, use whole-genome or appropriate chromosome references and expect significantly longer runtimes. The statistics and quality metrics from the toy demo are not biologically meaningful; use them only to verify that the scripts and tools are functioning correctly.
-
-Results
--------
-
-### Alignment workflow execution
-
-![Alignment Workflow Terminal](figures/alignment_workflow_terminal.png)
-
-The alignment and BAM processing workflow completes successfully when all steps execute without error. The toy FASTQ and toy reference produce **0% mapped reads**, which is expected because the reads in the demonstration file do not authentically align to the toy reference sequences. This is intentional and demonstrates that the tools are functioning correctly—they attempted alignment and found no matches, which is the correct behavior for incompatible data.
-
-### Generated files explained
-
-- **sample_unsorted.sorted.bam** — the BAM file sorted by reference coordinate (required for most downstream tools)
-- **sample_unsorted.sorted.bam.bai** — the BAM index file allowing rapid random access to alignments
-- **sample_unsorted.dedup.bam** — BAM file with duplicate reads marked (or removed if desired) by Picard
-- **sample_unsorted.metrics.txt** — Picard metrics report showing duplicate statistics (library complexity, duplication rate)
-- **sample_unsorted.flagstat.txt** — simple alignment statistics summary (total reads, mapped reads, paired reads, etc.)
-
-### Flagstat output example
-
-![Flagstat Output](figures/flagstat_output.png)
-
-The flagstat output provides a quick summary of alignment quality. In this toy demo, the 0.00% mapping rate reflects the intentional mismatch between the toy FASTQ and toy reference.
-
-What this module demonstrates
------------------------------
-
-- **Reference indexing** with `bwa index` and `samtools faidx` — preparation of reference FASTA for fast alignment lookup
-- **Alignment** with `bwa mem` — the core step mapping reads to the reference genome
-- **SAM to BAM conversion** with `samtools view -bS` — conversion to binary format for efficient storage
-- **BAM sorting** with `samtools sort` — ordering alignments by genomic coordinate (required by downstream tools)
-- **BAM indexing** with `samtools index` — creation of index for random access
-- **Duplicate marking** with `picard MarkDuplicates` — identify and flag PCR/optical duplicates
-- **Alignment QC** with `samtools flagstat` — quick summary statistics of alignment results
+- `sample_unsorted.bam` — raw alignment output  
+- `sample_unsorted.sorted.bam` — coordinate-sorted BAM  
+- `sample_unsorted.sorted.bam.bai` — BAM index  
+- `sample_unsorted.dedup.bam` — duplicate-marked BAM  
+- `sample_unsorted.metrics.txt` — duplication statistics  
+- `sample_unsorted.flagstat.txt` — alignment summary  
 
 ---
 
-**Note:** This is an educational module for workflow illustration. Treat outputs as demonstration artifacts, not scientific results.
+## How to Interpret Results
+
+### Alignment rate
+
+- High mapping rate (>90%) → good alignment  
+- Low mapping rate → possible issues with reference, contamination, or read quality  
+
+In this demonstration setup, low or zero mapping is expected due to mismatch between reads and reference.
+
+---
+
+### Duplicate rate
+
+- Low duplication → good library complexity  
+- High duplication (>20–30%) → potential PCR bias  
+
+---
+
+### Mapping quality
+
+- High MAPQ → confident alignment  
+- Low MAPQ → ambiguous or repetitive regions  
+
+---
+
+## Decision Guidelines
+
+Based on alignment results:
+
+- Good mapping and low duplication → proceed to variant calling  
+- Low mapping rate → check reference genome or read quality  
+- High duplication → consider filtering or reviewing library prep  
+- Poor metrics overall → revisit QC step  
+
+---
+
+## What This Affects Downstream
+
+Alignment quality directly impacts:
+
+- Variant calling accuracy  
+- False positive variant rates  
+- Coverage-based analyses  
+
+Poor alignment → unreliable variants  
+
+---
+
+## SAM vs BAM (Brief)
+
+- SAM — human-readable alignment format  
+- BAM — compressed binary format for efficient storage and processing  
+
+---
+
+## Why Sorting, Indexing, and Duplicate Marking?
+
+- Sorting groups reads by genomic position for downstream tools  
+- Indexing enables fast retrieval of genomic regions  
+- Duplicate marking reduces bias in variant calling  
+
+---
+
+## Results
+
+### Alignment workflow execution
+
+The workflow completes successfully when all steps execute without error.
+
+---
+
+### Alignment statistics
+
+The flagstat output summarizes:
+
+- Total reads  
+- Mapped reads  
+- Duplicate reads  
+
+---
+
+## What This Module Demonstrates
+
+- Reference indexing  
+- Read alignment  
+- SAM → BAM conversion  
+- BAM sorting and indexing  
+- Duplicate marking  
+- Alignment quality assessment  
+
+---
+
+## Real-World Usage
+
+In real sequencing projects:
+
+- Reads are aligned to full reference genomes (e.g., GRCh38)  
+- Multiple samples are processed in parallel  
+- Alignment metrics are used for QC and filtering  
+- High-quality BAM files are required for variant calling  
+
+---
+
+## Next Step
+
+Proceed to:
+
+**03_variant_calling_gatk**
+
+to identify SNPs and indels from aligned sequencing data.
