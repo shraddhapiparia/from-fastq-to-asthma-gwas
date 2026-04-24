@@ -1,0 +1,20 @@
+
+# mac
+.DS_Store
+
+# nextflow
+.nextflow*
+work/
+
+# results (large / reproducible)
+*/results/
+*/figures/
+*/data/
+
+# envs
+envs/
+*.yml
+
+# python cache
+__pycache__/
+
