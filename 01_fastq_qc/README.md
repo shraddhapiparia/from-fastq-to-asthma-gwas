@@ -52,8 +52,8 @@ The dataset is intentionally small to allow fast execution while preserving typi
 
 ### Setup environment
 ```bash
-conda env create -f environment.yml
-conda activate genomics-qc
+conda env create -f ../envs/genomics_pipeline.yml
+conda activate genomics_pipeline
 ```
 
 ### Download example data

@@ -1,20 +1,37 @@
-
-# mac
+# OS
 .DS_Store
 
-# nextflow
+
+# Nextflow
 .nextflow*
 work/
 
-# results (large / reproducible)
+
+# Data & outputs (reproducible)
 */results/
+!*/results/*.png
+!*/results/*.tsv
+!*/results/*.txt
 */figures/
 */data/
 
-# envs
-envs/
-*.yml
+# Large genomics files
+*.bam
+*.vcf.gz
+*.tbi
+*.fa
+*.fa.gz
+*.bai
+*.csi
 
-# python cache
+# Reports / rendered outputs
+*.html
+.ipynb_checkpoints/
+
+
+# Python
 __pycache__/
 
+
+# Local / temporary
+.Rhistory

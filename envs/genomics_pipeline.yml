@@ -1,0 +1,31 @@
+name: genomics_pipeline
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python=3.11
+
+  # 01 FASTQ QC
+  - fastqc
+  - multiqc
+  - seqtk
+
+  # 02 Alignment / BAM processing
+  - bwa
+  - samtools
+  - picard
+
+  # 03 Variant calling
+  - gatk4
+  - bcftools
+
+  # 04 Variant annotation
+  - ensembl-vep
+
+  # Python utilities
+  - pandas
+  - numpy
+  - matplotlib
+  - seaborn

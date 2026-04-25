@@ -54,7 +54,7 @@ Eigenvectors                      → module 06 (GWAS covariates PC1–PC5)
 ## Running the Analysis
 
 ```bash
-conda activate population_pca_env
+conda activate genomics_pipeline
 cd 05_population_pca
 ```
 
