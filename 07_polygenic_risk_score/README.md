@@ -23,6 +23,35 @@ This module demonstrates how GWAS summary statistics flow directly into a scorin
 
 ---
 
+## Summary
+
+This module converts GWAS effect sizes into per-sample polygenic risk scores using PLINK and evaluates score distributions across case/control groups.
+
+---
+
+## End-to-End Workflow
+
+This repository implements a complete genomics pipeline:
+
+FASTQ → QC → Alignment → Variant Calling → Annotation → PCA → GWAS → PRS → eQTL → Nextflow
+
+Each module is independently runnable and documented:
+
+| Step | Module |
+|------|--------|
+| 01 | FASTQ QC |
+| 02 | Alignment + BAM processing |
+| 03 | Variant calling (GATK) |
+| 04 | Variant annotation |
+| 05 | Population PCA |
+| 06 | GWAS |
+| 07 | PRS |
+| 08 | (optional / future) |
+| 09 | GWAS → eQTL |
+| 10 | Nextflow pipeline |
+
+---
+
 ## Dataset
 
 - **Genotypes**: QC-filtered PLINK binary fileset from module 05 (`demo_genotypes_qc.{bed,bim,fam}`) — 100 samples, ~1,000 SNPs
@@ -30,6 +59,21 @@ This module demonstrates how GWAS summary statistics flow directly into a scorin
 - **Weights**: Derived directly from the module 06 `.assoc.logistic` output; BETA = ln(OR) per variant
 
 Because the GWAS and scoring cohort are the same 100 samples, scores are in-sample and therefore optimistically biased due to overfitting. A production PRS derives weights from a large independent GWAS and applies them to a separate target dataset.
+
+---
+
+## Inputs
+
+- GWAS summary statistics (`.assoc.logistic`)
+- PLINK genotype files (`.bed/.bim/.fam`)
+- Phenotype file
+
+## Outputs
+
+- Per-sample PRS (`.profile`)
+- Merged phenotype + PRS table
+- Summary statistics
+- Visualization plots
 
 ---
 
@@ -58,6 +102,48 @@ merge_prs_pheno.py                — join .profile to phenotype; write per-grou
     ↓
 plot_prs.py                       — histogram + case/control boxplot
 ```
+
+---
+
+## Workflow Orchestration (Nextflow)
+
+Module 10 provides a Nextflow implementation of selected pipeline steps.
+
+**Location:**  
+`10_nextflow_pipeline/`
+
+**What it includes:**
+- DAG visualization  
+- Reproducible execution  
+- Modular pipeline definition  
+
+**Run the workflow:**
+
+```bash
+cd 10_nextflow_pipeline
+nextflow run main.nf
+```
+## Note:
+This is a simplified demonstration workflow for portfolio purposes. Individual modules (01–09) remain the primary reference implementation.
+
+## Environment Setup
+
+Create and activate the main environment:
+
+```bash
+conda env create -f ../envs/genomics_pipeline.yml
+conda activate genomics_pipeline
+```
+
+## Data Availability
+
+This repository uses small simulated or subset datasets for demonstration.
+
+Large files (BAM, full reference genomes, full VCFs) are intentionally excluded to keep the repository lightweight and portable.
+
+To reproduce full workflows:
+- Replace inputs with publicly available datasets (e.g., GIAB, 1000 Genomes)
+- Or use the provided small demo datasets for testing pipeline logic
 
 ---
 
@@ -158,6 +244,12 @@ results/
 - **PLINK log**: the line `N valid predictors` (PLINK 1.9) or `valid scoring entries` (PLINK 2) shows how many weight-file variants were found in the genotype data. Unexpectedly low counts suggest a mismatch in SNP IDs or allele coding.
 - **Why ln(OR) and not OR**: PLINK `--score` expects additive linear weights. Summing ln(OR) across variants is equivalent to computing the log of the product of individual ORs under a multiplicative model — the standard assumption in GWAS-based PRS.
 - **Quantitative evaluation**: In real datasets, PRS performance is assessed using metrics such as AUC (for classification) or R² (for continuous traits). These are not meaningful in this simulated, in-sample setting but are critical for real-world interpretation.
+
+---
+
+## Common Pitfall
+
+Using the same dataset for GWAS and PRS (in-sample scoring) leads to overfitting and inflated performance estimates. This module intentionally demonstrates this limitation.
 
 ---
 

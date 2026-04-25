@@ -55,7 +55,7 @@ Top hits table                        → module 09 (GWAS → eQTL annotation)
 ## Running the Analysis
 
 ```bash
-conda activate asthma_gwas_env
+conda activate genomics_pipeline
 cd 06_asthma_gwas
 ```
 

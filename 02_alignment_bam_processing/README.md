@@ -61,7 +61,7 @@ The workflow mirrors real alignment pipelines while remaining computationally ef
 ### Setup environment
 
 ```bash
-conda activate alignment-bam-processing
+conda activate genomics_pipeline
 ```
 
 ### Step 1: Index reference

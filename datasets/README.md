@@ -12,8 +12,8 @@ Run the following to create a small PLINK dataset with 100 samples and 1000 SNPs
 
 ```bash
 cd datasets
-conda env create -f ../05_population_pca/environment.yml  # or use existing env with PLINK
-conda activate population_pca_env
+conda env create -f ../envs/genomics_pipeline.yml
+conda activate genomics_pipeline
 bash scripts/simulate_demo_data.sh
 ```
 

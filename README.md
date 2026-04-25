@@ -98,7 +98,7 @@ This project focuses on core concepts that drive most genomics workflows:
 
 ---
 
-## 🧬 Example Biological Interpretation (Asthma)
+## Example Biological Interpretation (Asthma)
 
 Later modules demonstrate how computational outputs translate into biological hypotheses.
 
@@ -141,6 +141,17 @@ To keep the project lightweight and reproducible:
 
 ---
 
+## Environment Setup
+
+Create the main project environment:
+
+    conda env create -f envs/genomics_pipeline.yml
+    conda activate genomics_pipeline
+
+Some modules also include module-specific environment files when specialized dependencies are needed.
+
+---
+
 ## How to Run
 
 Each module is self-contained with its own environment and scripts.
@@ -149,8 +160,8 @@ Example:
 
 ```bash
 cd 05_population_pca
-conda env create -f environment.yml
-conda activate population_pca_env
+conda env create -f envs/genomics_pipeline.yml
+conda activate genomics_pipeline
 bash scripts/run_qc_pca.sh
 ```
 
@@ -165,6 +176,14 @@ This repository demonstrates:
 - Practical genomics pipeline implementation
 - Reproducible workflow design
 - Ability to connect computational outputs to biological interpretation
+
+---
+
+## Data Availability
+
+Large generated outputs and full-size genomics files such as BAM, FASTA, and VCF files are intentionally excluded from version control.
+
+The repository keeps small demo inputs and scripts needed to reproduce results. Larger public inputs should be downloaded or regenerated using the module instructions.
 
 ---
 

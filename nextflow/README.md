@@ -46,7 +46,7 @@ FASTQ QC, alignment, variant calling, and variant annotation are not included in
 
 ```bash
 cd 05_population_pca
-conda activate population_pca_env
+conda activate genomics_pipeline
 bash scripts/run_qc_pca.sh
 ```
 

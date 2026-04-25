@@ -50,7 +50,7 @@ Full functional annotation (consequence prediction, allele frequency lookup, pat
 ## Running the Analysis
 
 ```bash
-conda activate variant-annotation
+conda activate genomics_pipeline
 cd 04_variant_annotation
 ```
 
