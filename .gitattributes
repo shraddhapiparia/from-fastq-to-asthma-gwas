@@ -1,0 +1,5 @@
+*.html linguist-vendored
+*.txt linguist-vendored
+*.log linguist-vendored
+*.parquet linguist-vendored
+*.json linguist-vendored
